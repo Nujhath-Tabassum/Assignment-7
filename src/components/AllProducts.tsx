@@ -1,0 +1,112 @@
+interface Product {
+    id: number;
+    nameBn: string;
+    image: string;
+    today: number;
+    unit: string;
+    change: {
+        dir: "up" | "down" | "flat";
+        pct: number;
+    };
+}
+
+const banglaNumber = (number: number) => {
+    const digits = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"];
+
+    return number.toString().replace(/\d/g, (digit) => digits[Number(digit)]);
+};
+
+const AllProducts = async () => {
+    const res = await fetch(
+        "https://api.abcz.workers.dev/api/bazardor/products",
+        {
+            cache: "force-cache",
+        }
+    );
+
+    const products: Product[] = await res.json();
+
+    return (
+        <section className="px-6 pb-10">
+            <div className="mx-auto max-w-[1050px]">
+                <h2 className="text-[22px] font-bold text-gray-800">
+                    সকল পণ্য
+                </h2>
+
+                <p className="mt-1 text-[12px] text-gray-500">
+                    মোট {banglaNumber(products.length)}টি পণ্য দেখানো হচ্ছে
+                </p>
+
+                <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+                    {products.map((product) => (
+                        <div
+                            key={product.id}
+                            className="rounded-xl border border-gray-200 bg-white p-3"
+                        >
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#f5f6f2] text-[22px]">
+                                    {product.image}
+                                </div>
+
+                                <div>
+                                    <h3 className="text-[14px] font-semibold text-gray-800">
+                                        {product.nameBn}
+                                    </h3>
+
+                                    <p className="text-[10px] text-gray-500">
+                                        প্রতি {product.unit}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="mt-3 flex items-end justify-between">
+                                <div>
+                                    <p className="text-[10px] text-gray-500">
+                                        আজকের বাজার
+                                    </p>
+
+                                    <p className="text-[17px] font-bold text-gray-800">
+                                        {banglaNumber(product.today)}{" "}
+                                        <span className="text-[11px] font-normal">
+                                            টাকা
+                                        </span>
+                                    </p>
+                                </div>
+
+                                <div>
+                                    {product.change.dir === "up" && (
+                                        <span className="rounded-full bg-red-50 px-2 py-1 text-[10px] text-red-500">
+                                            ▲{" "}
+                                            {banglaNumber(
+                                                product.change.pct
+                                            )}
+                                            %
+                                        </span>
+                                    )}
+
+                                    {product.change.dir === "down" && (
+                                        <span className="rounded-full bg-green-50 px-2 py-1 text-[10px] text-green-600">
+                                            ▼{" "}
+                                            {banglaNumber(
+                                                Math.abs(product.change.pct)
+                                            )}
+                                            %
+                                        </span>
+                                    )}
+
+                                    {product.change.dir === "flat" && (
+                                        <span className="rounded-full bg-gray-100 px-2 py-1 text-[10px] text-gray-600">
+                                            — ০.০%
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
+};
+
+export default AllProducts;
