@@ -1,35 +1,40 @@
-import Link from "next/link";
 import React from "react";
+import ProtectedProductLink from "./ProtectedProductLink";
 
 type Product = {
-id: string;
-slug: string;
-nameBn: string;
-icon: string;
+    id: string | number;
+    slug: string;
+    nameBn: string;
+    icon: string;
 };
 
 type ProductCardProps = {
-product: Product;
+    product: Product;
 };
 
 const ProductCard = ({ product }: ProductCardProps) => {
-return (
-<Link href={`/products/${product.id}`}> <div className="h-full"> <div className="card bg-base-100 shadow-sm h-full"> <div className="card-body items-center text-center"> <p className="text-5xl">
-{product.icon} </p>
+    return (
+        <ProtectedProductLink
+            href={`/product/${product.id}`}
+            className="block rounded-xl border border-gray-200 bg-white p-4 transition hover:border-green-500 hover:shadow-md"
+        >
+            <div className="flex items-center gap-3">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-green-50 text-2xl">
+                    {product.icon}
+                </div>
 
-```
-                    <h2 className="card-title">
+                <div className="min-w-0">
+                    <h3 className="truncate text-sm font-semibold text-gray-800">
                         {product.nameBn}
-                    </h2>
+                    </h3>
 
-                    <p>{product.slug}</p>
+                    <p className="mt-1 text-xs text-gray-500">
+                        বিস্তারিত দেখুন →
+                    </p>
                 </div>
             </div>
-        </div>
-    </Link>
-);
-
-
+        </ProtectedProductLink>
+    );
 };
 
 export default ProductCard;
