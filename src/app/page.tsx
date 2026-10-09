@@ -1,15 +1,18 @@
 import Marquee from "@/components/Marquee";
 import Image from "next/image";
 import logo from "../../public/bazar-hero.png";
+import AllProducts from "@/components/AllProducts";
+import IncreasePrice from "@/components/IncreasePrice";
+import DecreasingPrice from "@/components/DecreasingPrice";
 
 
 export default function Home() {
     return (
-        <div>
+        <div className="bg-green-50">
             <Marquee />
 
            <section className="px-6 py-5">
-                <div className="mx-auto max-w-230 min-h-64 rounded-[20px] border border-gray-200 bg-white px-6 py-5 flex  justify-between overflow-hidden">
+                <div className="mx-auto max-w-255 min-h-64 rounded-[20px] border border-gray-200 bg-white px-6 py-5 flex  justify-between overflow-hidden">
 
                     {/* Left Content */}
                     <div className="max-w-140">
@@ -51,6 +54,9 @@ export default function Home() {
 
                 </div>
             </section>
+            <IncreasePrice/>
+            <DecreasingPrice/>
+            <AllProducts/>
                
         </div>
     );

@@ -16,7 +16,7 @@ const banglaNumber = (number: number) => {
     return number.toString().replace(/\d/g, (digit) => digits[Number(digit)]);
 };
 
-const AllProducts = async () => {
+const IncreasePrice = async () => {
     const res = await fetch(
         "https://api.abcz.workers.dev/api/bazardor/products",
         {
@@ -26,19 +26,21 @@ const AllProducts = async () => {
 
     const products: Product[] = await res.json();
 
+    const increasedProducts = products
+        .filter((product) => product.change.dir === "up")
+        .sort((a, b) => b.change.pct - a.change.pct)
+        .slice(0, 6);
+
     return (
-        <section className="px-6 pb-10">
+        <section className="px-6 pb-5">
             <div className="mx-auto max-w-255">
-                <h2 className="text-[19px] font-bold text-gray-800">
-                    সকল পণ্য
+                <h2 className="flex items-center gap-1 text-[19px] font-bold text-gray-800">
+                    <span className="text-[10px] text-red-600">▲</span>
+                    আজকে দাম বেড়েছে
                 </h2>
 
-                <p className="mt-1 text-[12px] text-gray-500">
-                    মোট {banglaNumber(products.length)}টি পণ্য দেখানো হচ্ছে
-                </p>
-
-                <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
-                    {products.map((product) => (
+                <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+                    {increasedProducts.map((product) => (
                         <div
                             key={product.id}
                             className="rounded-xl border border-gray-200 bg-white p-3"
@@ -73,33 +75,10 @@ const AllProducts = async () => {
                                     </p>
                                 </div>
 
-                                <div>
-                                    {product.change.dir === "up" && (
-                                        <span className="rounded-full bg-red-50 px-2 py-1 text-[10px] text-red-500">
-                                            ▲{" "}
-                                            {banglaNumber(
-                                                product.change.pct
-                                            )}
-                                            %
-                                        </span>
-                                    )}
-
-                                    {product.change.dir === "down" && (
-                                        <span className="rounded-full bg-green-50 px-2 py-1 text-[10px] text-green-600">
-                                            ▼{" "}
-                                            {banglaNumber(
-                                                Math.abs(product.change.pct)
-                                            )}
-                                            %
-                                        </span>
-                                    )}
-
-                                    {product.change.dir === "flat" && (
-                                        <span className="rounded-full bg-gray-100 px-2 py-1 text-[10px] text-gray-600">
-                                            — ০.০%
-                                        </span>
-                                    )}
-                                </div>
+                                <span className="rounded-full bg-red-50 px-2 py-1 text-[10px] text-red-500">
+                                    ▲{" "}
+                                    {banglaNumber(product.change.pct)}%
+                                </span>
                             </div>
                         </div>
                     ))}
@@ -109,4 +88,4 @@ const AllProducts = async () => {
     );
 };
 
-export default AllProducts;
+export default IncreasePrice;
