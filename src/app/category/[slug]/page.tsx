@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
+import CategoryProductsGrid from "@/components/CategoryProductsGrid";
 
 interface Params {
   slug: string;
@@ -75,94 +76,11 @@ async function CategoryProducts({
           </div>
         </section>
 
-        {/* Sorting bar */}
-        <section className="mb-4 flex h-[55px] items-center justify-end rounded-[15px] border border-[#e7e5e1] bg-[#fdfcfb] px-4">
-          <label
-            htmlFor="sort"
-            className="mr-2 text-[12px] text-[#777873]"
-          >
-            সাজান
-          </label>
-
-          <select
-            id="sort"
-            defaultValue="default"
-            className="rounded-lg border border-[#d9d8d4] bg-transparent px-3 py-1.5 text-[12px] text-[#333630] outline-none focus:border-green-600"
-            disabled
-          >
-            <option value="default">ডিফল্ট</option>
-          </select>
-        </section>
-
-        {/* Product count */}
-        <p className="mb-4 text-[12px] text-[#777873]">
-          মোট {products.length}টি পণ্য দেখানো হচ্ছে
-        </p>
-
-        {/* Product grid */}
-        <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map((product) => (
-            <article
-              key={product.id}
-              className="min-h-[113px] rounded-[15px] border border-[#e7e5e1] bg-[#fdfcfb] p-3 transition-shadow duration-200 hover:shadow-sm"
-            >
-              {/* Product information */}
-              <div className="flex items-center gap-2.5">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#f3f2ef] text-[24px]">
-                  {product.image || category.categoryIcon}
-                </div>
-
-                <div className="min-w-0">
-                  <h2 className="text-[14px] font-bold leading-5 text-[#292c26]">
-                    {product.nameBn}
-                  </h2>
-
-                  <p className="text-[11px] text-[#777873]">
-                    {product.unit}
-                  </p>
-                </div>
-              </div>
-
-              {/* Price information */}
-              <div className="mt-2.5">
-                <p className="text-[11px] leading-4 text-[#777873]">
-                  আজকের দাম
-                </p>
-
-                <div className="flex items-center justify-between gap-2">
-                  <p className="text-[16px] font-bold leading-5 text-[#292c26]">
-                    ৳{product.today} টাকা
-                  </p>
-
-                  {/* Price change */}
-                  <span
-                    className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-semibold leading-none ${
-                      product.change.dir === "up"
-                        ? "bg-[#f8f2f0] text-[#c7443e]"
-                        : product.change.dir === "down"
-                          ? "bg-[#eff5ee] text-[#47945b]"
-                          : "bg-[#f1f1ed] text-[#666961]"
-                    }`}
-                  >
-                    {product.change.dir === "up"
-                      ? "▲"
-                      : product.change.dir === "down"
-                        ? "▼"
-                        : "—"}{" "}
-                    {Math.abs(product.change.pct).toLocaleString(
-                      "en-US",
-                      {
-                        minimumFractionDigits: 1,
-                        maximumFractionDigits: 1,
-                      }
-                    )}
-                    %
-                  </span>
-                </div>
-              </div>
-            </article>
-          ))}
-        </section>
+        {/* Working sorting bar and product grid */}
+        <CategoryProductsGrid
+          products={products}
+          categoryIcon={category.categoryIcon}
+        />
       </div>
     </main>
   );
