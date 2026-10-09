@@ -1,7 +1,14 @@
 "use client";
+import Link from "next/link";
 
 import { useMemo, useState } from "react";
+function toBanglaNumber(value: number): string {
+  const banglaDigits = "০১২৩৪৫৬৭৮৯";
 
+  return value.toString().replace(/\d/g, (digit) => {
+    return banglaDigits[Number(digit)];
+  });
+}
 interface Product {
   id: number;
   slug: string;
@@ -79,10 +86,11 @@ export default function CategoryProductsGrid({
       {/* Product grid */}
       <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {sortedProducts.map((product) => (
-          <article
-            key={product.id}
-            className="min-h-[113px] rounded-[15px] border border-[#e7e5e1] bg-[#fdfcfb] p-3 transition-shadow duration-200 hover:shadow-sm"
-          >
+          <Link
+  key={product.id}
+  href={`/product/${product.id}`}
+  className="block min-h-[113px] rounded-[15px] border border-[#e7e5e1] bg-[#fdfcfb] p-3 transition-shadow duration-200 hover:shadow-sm"
+>
             {/* Product information */}
             <div className="flex items-center gap-2.5">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#f3f2ef] text-[24px]">
@@ -94,9 +102,7 @@ export default function CategoryProductsGrid({
                   {product.nameBn}
                 </h2>
 
-                <p className="text-[11px] text-[#777873]">
-                  {product.unit}
-                </p>
+               
               </div>
             </div>
 
@@ -108,36 +114,30 @@ export default function CategoryProductsGrid({
 
               <div className="flex items-center justify-between gap-2">
                 <p className="text-[16px] font-bold leading-5 text-[#292c26]">
-                  ৳{product.today} টাকা
+                  {toBanglaNumber(product.today)} <span className="text-[12px]">টাকা</span>
                 </p>
 
                 {/* Price change */}
-                <span
-                  className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-semibold leading-none ${
-                    product.change.dir === "up"
-                      ? "bg-[#f8f2f0] text-[#c7443e]"
-                      : product.change.dir === "down"
-                        ? "bg-[#eff5ee] text-[#47945b]"
-                        : "bg-[#f1f1ed] text-[#666961]"
-                  }`}
-                >
-                  {product.change.dir === "up"
-                    ? "▲"
-                    : product.change.dir === "down"
-                      ? "▼"
-                      : "—"}{" "}
-                  {Math.abs(product.change.pct).toLocaleString(
-                    "en-US",
-                    {
-                      minimumFractionDigits: 1,
-                      maximumFractionDigits: 1,
-                    }
-                  )}
-                  %
-                </span>
+               
+<span
+  className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-semibold leading-none ${
+    product.change.dir === "up"
+      ? "bg-[#f8f2f0] text-[#c7443e]"
+      : product.change.dir === "down"
+        ? "bg-[#eff5ee] text-[#47945b]"
+        : "bg-[#f1f1ed] text-[#666961]"
+  }`}
+>
+  {product.change.dir === "up"
+    ? "▲"
+    : product.change.dir === "down"
+      ? "▼"
+      : "—"}{" "}
+  {toBanglaNumber(Math.abs(product.change.pct))}%
+</span>
               </div>
             </div>
-          </article>
+          </Link>
         ))}
       </section>
     </>

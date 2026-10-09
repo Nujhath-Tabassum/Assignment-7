@@ -58,7 +58,7 @@ async function CategoryProducts({
 
   return (
     <main className="min-h-[calc(100vh-125px)] bg-[#f4f3ef] px-4 py-6 sm:px-6">
-      <div className="mx-auto max-w-[920px]">
+      <div className="mx-auto max-w-[800px]">
         {/* Category heading */}
         <section className="mb-5 flex min-h-[77px] items-center gap-3 rounded-[15px] border border-[#e7e5e1] bg-[#fdfcfb] px-4 py-4">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#f3f2ef] text-[28px]">

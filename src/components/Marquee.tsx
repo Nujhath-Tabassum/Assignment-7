@@ -21,66 +21,69 @@ const Marquee = async () => {
         }
     );
 
+    if (!res.ok) {
+        throw new Error("Failed to fetch marquee products");
+    }
+
     const products: Product[] = await res.json();
 
+    const banglaNumber = (number: number) =>
+        number.toString().replace(/\d/g, (digit) =>
+            "০১২৩৪৫৬৭৮৯"[Number(digit)]
+        );
+
     return (
-        <div className="w-full bg-white text-gray-700 flex overflow-hidden border-y border-gray-200">
-
-            {/* Moving products */}
-            <div className="flex-1 min-w-0 overflow-hidden">
-
+        <div className="flex w-full overflow-hidden border-y border-gray-200 bg-white text-gray-700">
+            <div className="min-w-0 flex-1 overflow-hidden">
                 <MarqueeText
                     className="py-2"
-                    duration={10}
-                    direction="left"
+                    duration={20}
+                    direction="right"
                 >
                     {products.map((product) => (
                         <span
                             key={product.id}
                             className="whitespace-nowrap text-[12px]"
                         >
-                            {/* Product image */}
                             <span className="mr-1">
                                 {product.image}
                             </span>
 
-                            {/* Product name */}
-                            <span>
-                                {product.nameBn}
-                            </span>
+                            <span>{product.nameBn}</span>
 
-                            {/* Price */}
                             <span className="mx-1">
-                                {product.today} টাকা/{product.unit}
+                                {banglaNumber(product.today)} টাকা/
+                                {product.unit}
                             </span>
 
-                            {/* Change */}
                             {product.change.dir === "up" && (
                                 <span className="text-red-500">
-                                    ▲ {product.change.pct}%
+                                    ▲ {banglaNumber(product.change.pct)}%
                                 </span>
                             )}
 
                             {product.change.dir === "down" && (
                                 <span className="text-green-600">
-                                    ▼ {Math.abs(product.change.pct)}%
+                                    ▼{" "}
+                                    {banglaNumber(
+                                        Math.abs(product.change.pct)
+                                    )}
+                                    %
                                 </span>
                             )}
 
                             {product.change.dir === "flat" && (
                                 <span className="text-gray-500">
-                                    — 0%
+                                    — ০%
                                 </span>
                             )}
 
-                            {/* Separator */}
                             <span className="mx-5 text-gray-300">
                                 |
                             </span>
                         </span>
                     ))}
                 </MarqueeText>
-
             </div>
         </div>
     );

@@ -8,8 +8,8 @@ import DecreasingPrice from "@/components/DecreasingPrice";
 
 export default function Home() {
     return (
-        <div className="bg-green-50">
-            <Marquee />
+        <div className="bg-[#f4f3ef]">
+          
 
            <section className="px-6 py-5">
                 <div className="mx-auto max-w-255 min-h-64 rounded-[20px] border border-gray-200 bg-white px-6 py-5 flex  justify-between overflow-hidden">
