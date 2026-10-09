@@ -1,35 +1,125 @@
-"use client"
+"use client";
+
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 
 const SignUpPage = () => {
-     const onSubmit =async(e:React.SubmitEvent<HTMLFormElement>)=>{
-e.preventDefault();
+    const router = useRouter();
 
-const formData = new FormData(e.target);
-const user = Object.fromEntries(formData.entries()) as {name:string, imageUrl:string,email:string,password:string};
-const {data,error}=await authClient.signUp.email({
-    ...user,
-    callbackURL:"/"
-})
+    const [isLoading, setIsLoading] = useState(false);
+    const [socialLoading, setSocialLoading] = useState<
+        "google" | "github" | null
+    >(null);
+    const [errorMessage, setErrorMessage] = useState("");
 
-if(data){
-    
-    console.log(data)
-    redirect("/")
-}
-if(error){
-    console.log(error)
-}
-    }
+    // Email and password sign up
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        setErrorMessage("");
+
+        const formData = new FormData(e.currentTarget);
+
+        const name = formData.get("name") as string;
+        const email = formData.get("email") as string;
+        const password = formData.get("password") as string;
+        const confirmPassword = formData.get("confirmPassword") as string;
+
+        if (password !== confirmPassword) {
+            setErrorMessage("দুটি পাসওয়ার্ড একই নয়।");
+            return;
+        }
+
+        if (password.length < 8) {
+            setErrorMessage("পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।");
+            return;
+        }
+
+        setIsLoading(true);
+
+        try {
+            const { data, error } = await authClient.signUp.email({
+                name,
+                email,
+                password,
+                callbackURL: "/",
+            });
+
+            if (error) {
+                setErrorMessage(
+                    error.message || "অ্যাকাউন্ট তৈরি করা যায়নি।"
+                );
+                return;
+            }
+
+            if (data) {
+                router.push("/");
+                router.refresh();
+            }
+        } catch {
+            setErrorMessage(
+                "অ্যাকাউন্ট তৈরি করা যায়নি। আবার চেষ্টা করুন।"
+            );
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // Google sign up
+    const handleGoogleSignUp = async () => {
+        setErrorMessage("");
+        setSocialLoading("google");
+
+        try {
+            const { error } = await authClient.signIn.social({
+                provider: "google",
+                callbackURL: "/",
+            });
+
+            if (error) {
+                setErrorMessage(
+                    error.message || "Google দিয়ে সাইন আপ করা যায়নি।"
+                );
+                setSocialLoading(null);
+            }
+        } catch {
+            setErrorMessage("Google দিয়ে সাইন আপ করা যায়নি।");
+            setSocialLoading(null);
+        }
+    };
+
+    // GitHub sign up
+    const handleGithubSignUp = async () => {
+        setErrorMessage("");
+        setSocialLoading("github");
+
+        try {
+            const { error } = await authClient.signIn.social({
+                provider: "github",
+                callbackURL: "/",
+            });
+
+            if (error) {
+                setErrorMessage(
+                    error.message || "GitHub দিয়ে সাইন আপ করা যায়নি।"
+                );
+                setSocialLoading(null);
+            }
+        } catch {
+            setErrorMessage("GitHub দিয়ে সাইন আপ করা যায়নি।");
+            setSocialLoading(null);
+        }
+    };
+
     return (
         <main className="flex min-h-screen flex-col items-center bg-[#f5f4f0] px-4 py-8 text-[#333333]">
             {/* Heading */}
             <div className="mb-5 text-center">
-                <h1 className="text-2xl font-bold">অ্যাকাউন্ট তৈরি করুন</h1>
+                <h1 className="text-2xl font-bold">
+                    অ্যাকাউন্ট তৈরি করুন
+                </h1>
 
                 <p className="mt-1 text-xs text-gray-500">
                     বিনা খরচে সাইন আপ করে সব বাজারদর সাথে দেখুন।
@@ -121,19 +211,34 @@ if(error){
                         />
                     </div>
 
+                    {/* Error Message */}
+                    {errorMessage && (
+                        <p
+                            role="alert"
+                            className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600"
+                        >
+                            {errorMessage}
+                        </p>
+                    )}
+
                     {/* Signup Button */}
                     <button
                         type="submit"
-                        className="mt-0.5 h-[33px] w-full rounded-lg bg-[#43884a] text-xs font-semibold text-white shadow-[0_3px_0_#c7d8c8] transition hover:bg-[#36763d] active:translate-y-0.5 active:shadow-none"
+                        disabled={isLoading || socialLoading !== null}
+                        className="mt-0.5 h-[33px] w-full rounded-lg bg-[#43884a] text-xs font-semibold text-white shadow-[0_3px_0_#c7d8c8] transition hover:bg-[#36763d] active:translate-y-0.5 active:shadow-none disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                        অ্যাকাউন্ট তৈরি করুন
+                        {isLoading
+                            ? "অ্যাকাউন্ট তৈরি হচ্ছে..."
+                            : "অ্যাকাউন্ট তৈরি করুন"}
                     </button>
 
                     {/* Divider */}
                     <div className="my-1 flex items-center gap-3">
                         <div className="h-px flex-1 bg-[#e5e3de]" />
 
-                        <span className="text-xs text-gray-500">অথবা</span>
+                        <span className="text-xs text-gray-500">
+                            অথবা
+                        </span>
 
                         <div className="h-px flex-1 bg-[#e5e3de]" />
                     </div>
@@ -143,16 +248,25 @@ if(error){
                         {/* Google */}
                         <button
                             type="button"
-                            className="flex h-[32px] items-center justify-center gap-1 rounded-lg border border-[#e7e5e0] bg-transparent px-2 text-[11px] font-medium transition hover:bg-gray-50"
+                            onClick={handleGoogleSignUp}
+                            disabled={isLoading || socialLoading !== null}
+                            className="flex h-[32px] items-center justify-center gap-1 rounded-lg border border-[#e7e5e0] bg-transparent px-2 text-[11px] font-medium transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
                         >
-                            <span className="font-bold text-[#4285f4]">G</span>
-                            Google দিয়ে চালিয়ে যান
+                            <span className="font-bold text-[#4285f4]">
+                                G
+                            </span>
+
+                            {socialLoading === "google"
+                                ? "Google খুলছে..."
+                                : "Google দিয়ে চালিয়ে যান"}
                         </button>
 
                         {/* GitHub */}
                         <button
                             type="button"
-                            className="flex h-[32px] items-center justify-center gap-1 rounded-lg border border-[#e7e5e0] bg-transparent px-2 text-[11px] font-medium transition hover:bg-gray-50"
+                            onClick={handleGithubSignUp}
+                            disabled={isLoading || socialLoading !== null}
+                            className="flex h-[32px] items-center justify-center gap-1 rounded-lg border border-[#e7e5e0] bg-transparent px-2 text-[11px] font-medium transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
                         >
                             <svg
                                 viewBox="0 0 24 24"
@@ -163,7 +277,9 @@ if(error){
                                 <path d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.55.1.76-.24.76-.54v-2.08c-3.1.67-3.75-1.32-3.75-1.32-.5-1.29-1.24-1.63-1.24-1.63-1.01-.69.08-.68.08-.68 1.12.08 1.71 1.15 1.71 1.15.99 1.7 2.6 1.21 3.23.92.1-.72.39-1.21.7-1.49-2.47-.28-5.07-1.24-5.07-5.5 0-1.21.43-2.2 1.15-2.97-.12-.28-.5-1.41.11-2.94 0 0 .94-.3 3.05 1.14a10.6 10.6 0 0 1 5.55 0c2.12-1.44 3.05-1.14 3.05-1.14.61 1.53.23 2.66.11 2.94.72.77 1.15 1.76 1.15 2.97 0 4.27-2.6 5.21-5.08 5.49.4.35.75 1.02.75 2.06v3.08c0 .3.2.65.77.54A11.1 11.1 0 0 0 12 .9Z" />
                             </svg>
 
-                            GitHub দিয়ে চালিয়ে যান
+                            {socialLoading === "github"
+                                ? "GitHub খুলছে..."
+                                : "GitHub দিয়ে চালিয়ে যান"}
                         </button>
                     </div>
                 </form>
