@@ -1,6 +1,7 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
+import { toast } from "react-toastify";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -29,11 +30,13 @@ const SignUpPage = () => {
 
         if (password !== confirmPassword) {
             setErrorMessage("দুটি পাসওয়ার্ড একই নয়।");
+            toast.error("দুটি পাসওয়ার্ড একই নয়।");
             return;
         }
 
         if (password.length < 8) {
             setErrorMessage("পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।");
+            toast.error("পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।");
             return;
         }
 
@@ -51,15 +54,22 @@ const SignUpPage = () => {
                 setErrorMessage(
                     error.message || "অ্যাকাউন্ট তৈরি করা যায়নি।"
                 );
+                toast.error(
+                    error.message || "অ্যাকাউন্ট তৈরি করা যায়নি।"
+                );
                 return;
             }
 
             if (data) {
+                toast.success("সফলভাবে অ্যাকাউন্ট তৈরি হয়েছে!");
                 router.push("/");
                 router.refresh();
             }
         } catch {
             setErrorMessage(
+                "অ্যাকাউন্ট তৈরি করা যায়নি। আবার চেষ্টা করুন।"
+            );
+            toast.error(
                 "অ্যাকাউন্ট তৈরি করা যায়নি। আবার চেষ্টা করুন।"
             );
         } finally {
@@ -82,10 +92,14 @@ const SignUpPage = () => {
                 setErrorMessage(
                     error.message || "Google দিয়ে সাইন আপ করা যায়নি।"
                 );
+                toast.error(
+                    error.message || "Google দিয়ে সাইন আপ করা যায়নি।"
+                );
                 setSocialLoading(null);
             }
         } catch {
             setErrorMessage("Google দিয়ে সাইন আপ করা যায়নি।");
+            toast.error("Google দিয়ে সাইন আপ করা যায়নি।");
             setSocialLoading(null);
         }
     };
@@ -105,10 +119,14 @@ const SignUpPage = () => {
                 setErrorMessage(
                     error.message || "GitHub দিয়ে সাইন আপ করা যায়নি।"
                 );
+                toast.error(
+                    error.message || "GitHub দিয়ে সাইন আপ করা যায়নি।"
+                );
                 setSocialLoading(null);
             }
         } catch {
             setErrorMessage("GitHub দিয়ে সাইন আপ করা যায়নি।");
+            toast.error("GitHub দিয়ে সাইন আপ করা যায়নি।");
             setSocialLoading(null);
         }
     };
@@ -127,7 +145,7 @@ const SignUpPage = () => {
             </div>
 
             {/* Signup Form */}
-            <div className="w-full max-w-sm rounded-2xl border border-[#e8e6e1] bg-[#fffdfb] p-[18px] shadow-sm">
+            <div className="w-full max-w-sm rounded-2xl border border-[#e8e6e1] bg-[#fffdfb] p-4.5 shadow-sm">
                 <form onSubmit={onSubmit} className="flex flex-col gap-3">
                     {/* Name */}
                     <div>
@@ -145,7 +163,7 @@ const SignUpPage = () => {
                             placeholder="যেমন: রহিম উদ্দিন"
                             autoComplete="name"
                             required
-                            className="h-[32px] w-full rounded-lg border border-[#e7e5e0] bg-transparent px-3 text-xs outline-none transition focus:border-green-600 focus:ring-1 focus:ring-green-600"
+                            className="h-8 w-full rounded-lg border border-[#e7e5e0] bg-transparent px-3 text-xs outline-none transition focus:border-green-600 focus:ring-1 focus:ring-green-600"
                         />
                     </div>
 
@@ -165,7 +183,7 @@ const SignUpPage = () => {
                             placeholder="you@example.com"
                             autoComplete="email"
                             required
-                            className="h-[32px] w-full rounded-lg border border-[#e7e5e0] bg-transparent px-3 text-xs outline-none transition focus:border-green-600 focus:ring-1 focus:ring-green-600"
+                            className="h-8 w-full rounded-lg border border-[#e7e5e0] bg-transparent px-3 text-xs outline-none transition focus:border-green-600 focus:ring-1 focus:ring-green-600"
                         />
                     </div>
 
@@ -186,7 +204,7 @@ const SignUpPage = () => {
                             autoComplete="new-password"
                             minLength={8}
                             required
-                            className="h-[32px] w-full rounded-lg border border-[#e7e5e0] bg-transparent px-3 text-xs outline-none transition focus:border-green-600 focus:ring-1 focus:ring-green-600"
+                            className="h-8 w-full rounded-lg border border-[#e7e5e0] bg-transparent px-3 text-xs outline-none transition focus:border-green-600 focus:ring-1 focus:ring-green-600"
                         />
                     </div>
 
@@ -207,7 +225,7 @@ const SignUpPage = () => {
                             autoComplete="new-password"
                             minLength={8}
                             required
-                            className="h-[32px] w-full rounded-lg border border-[#e7e5e0] bg-transparent px-3 text-xs outline-none transition focus:border-green-600 focus:ring-1 focus:ring-green-600"
+                            className="h-8 w-full rounded-lg border border-[#e7e5e0] bg-transparent px-3 text-xs outline-none transition focus:border-green-600 focus:ring-1 focus:ring-green-600"
                         />
                     </div>
 
@@ -225,7 +243,7 @@ const SignUpPage = () => {
                     <button
                         type="submit"
                         disabled={isLoading || socialLoading !== null}
-                        className="mt-0.5 h-[33px] w-full rounded-lg bg-[#43884a] text-xs font-semibold text-white shadow-[0_3px_0_#c7d8c8] transition hover:bg-[#36763d] active:translate-y-0.5 active:shadow-none disabled:cursor-not-allowed disabled:opacity-60"
+                        className="mt-0.5 h-8.25 w-full rounded-lg bg-[#43884a] text-xs font-semibold text-white shadow-[0_3px_0_#c7d8c8] transition hover:bg-[#36763d] active:translate-y-0.5 active:shadow-none disabled:cursor-not-allowed disabled:opacity-60"
                     >
                         {isLoading
                             ? "অ্যাকাউন্ট তৈরি হচ্ছে..."
@@ -250,7 +268,7 @@ const SignUpPage = () => {
                             type="button"
                             onClick={handleGoogleSignUp}
                             disabled={isLoading || socialLoading !== null}
-                            className="flex h-[32px] items-center justify-center gap-1 rounded-lg border border-[#e7e5e0] bg-transparent px-2 text-[11px] font-medium transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
+                            className="flex h-8 items-center justify-center gap-1 rounded-lg border border-[#e7e5e0] bg-transparent px-2 text-[11px] font-medium transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
                         >
                             <span className="font-bold text-[#4285f4]">
                                 G
@@ -266,7 +284,7 @@ const SignUpPage = () => {
                             type="button"
                             onClick={handleGithubSignUp}
                             disabled={isLoading || socialLoading !== null}
-                            className="flex h-[32px] items-center justify-center gap-1 rounded-lg border border-[#e7e5e0] bg-transparent px-2 text-[11px] font-medium transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
+                            className="flex h-8 items-center justify-center gap-1 rounded-lg border border-[#e7e5e0] bg-transparent px-2 text-[11px] font-medium transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
                         >
                             <svg
                                 viewBox="0 0 24 24"

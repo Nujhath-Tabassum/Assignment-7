@@ -1,6 +1,8 @@
 import { Suspense } from "react";
-import { notFound } from "next/navigation";
+
 import CategoryProductsGrid from "@/components/CategoryProductsGrid";
+import CategoryProductsSkeleton from "@/components/CategoryProductsSkeleton";
+import CategoryEmptyState from "@/components/CategoryEmptyState";
 
 interface Params {
   slug: string;
@@ -32,9 +34,7 @@ interface Product {
 const API_URL =
   "https://api.api-store.workers.dev/api/bazardor/products";
 
-async function CategoryProducts({
-  params,
-}: CategoryPageProps) {
+async function CategoryProducts({ params }: CategoryPageProps) {
   const { slug } = await params;
 
   const res = await fetch(
@@ -45,14 +45,14 @@ async function CategoryProducts({
   );
 
   if (!res.ok) {
-    throw new Error("Failed to fetch products");
-  }
+  return <CategoryEmptyState />;
+}
 
   const products: Product[] = await res.json();
 
   if (!Array.isArray(products) || products.length === 0) {
-    notFound();
-  }
+  return <CategoryEmptyState />;
+}
 
   const category = products[0];
 
@@ -76,7 +76,7 @@ async function CategoryProducts({
           </div>
         </section>
 
-        {/* Working sorting bar and product grid */}
+        {/* Product grid */}
         <CategoryProductsGrid
           products={products}
           categoryIcon={category.categoryIcon}
@@ -89,27 +89,24 @@ async function CategoryProducts({
 function CategoryLoading() {
   return (
     <main className="min-h-[calc(100vh-125px)] bg-[#f4f3ef] px-4 py-6 sm:px-6">
-      <div className="mx-auto max-w-230 animate-pulse">
-        <div className="mb-5 h-19.25 rounded-[15px] bg-white" />
+      <div className="mx-auto max-w-220">
+        {/* Category heading skeleton */}
+        <section className="mb-5 flex min-h-19.25 animate-pulse items-center gap-3 rounded-[15px] border border-[#e7e5e1] bg-[#fdfcfb] px-4 py-4">
+          <div className="h-10 w-10 shrink-0 rounded-xl bg-gray-200" />
 
-        <div className="mb-4 h-13.75 rounded-[15px] bg-white" />
+          <div className="flex-1 space-y-2">
+            <div className="h-5 w-32 rounded bg-gray-200" />
+            <div className="h-3 w-52 max-w-full rounded bg-gray-200" />
+          </div>
+        </section>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3, 4].map((item) => (
-            <div
-              key={item}
-              className="h-28.25 rounded-[15px] bg-white"
-            />
-          ))}
-        </div>
+        <CategoryProductsSkeleton />
       </div>
     </main>
   );
 }
 
-export default function CategoryPage({
-  params,
-}: CategoryPageProps) {
+export default function CategoryPage({ params }: CategoryPageProps) {
   return (
     <Suspense fallback={<CategoryLoading />}>
       <CategoryProducts params={params} />

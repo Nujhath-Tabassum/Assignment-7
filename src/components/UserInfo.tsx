@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { toast } from "react-toastify";
 
 const UserInfo = () => {
     const { data: session } = authClient.useSession();
@@ -14,6 +15,22 @@ const UserInfo = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isSigningOut, setIsSigningOut] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+
+    // Show toast when the user's name is updated
+    const previousNameRef = useRef<string | undefined>(undefined);
+
+    useEffect(() => {
+        if (!user?.name) return;
+
+        if (
+            previousNameRef.current !== undefined &&
+            previousNameRef.current !== user.name
+        ) {
+            toast.success("আপনার নাম সফলভাবে আপডেট হয়েছে!");
+        }
+
+        previousNameRef.current = user.name;
+    }, [user?.name]);
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -48,13 +65,16 @@ const UserInfo = () => {
             const { error } = await authClient.signOut();
 
             if (error) {
+                toast.error("সাইন আউট করা যায়নি!");
                 console.error("Sign out failed:", error);
                 return;
             }
 
             setIsOpen(false);
+            toast.success("সফলভাবে সাইন আউট হয়েছে!");
             router.refresh();
         } catch (error) {
+            toast.error("সাইন আউট করা যায়নি!");
             console.error("Sign out failed:", error);
         } finally {
             setIsSigningOut(false);
@@ -78,14 +98,14 @@ const UserInfo = () => {
                     >
                         {/* Avatar */}
                         <div className="h-7 w-7 overflow-hidden rounded-lg bg-gray-100">
-                           {user.image ? (
-    <Image
-        src={user.image}
-        alt={user.name || "User avatar"}
-        width={28}
-        height={28}
-        className="h-full w-full object-cover"
-    />
+                            {user.image ? (
+                                <Image
+                                    src={user.image}
+                                    alt={user.name || "User avatar"}
+                                    width={28}
+                                    height={28}
+                                    className="h-full w-full object-cover"
+                                />
                             ) : (
                                 <div className="flex h-full w-full items-center justify-center bg-[#e8f0e8] text-sm font-semibold text-[#43884a]">
                                     {user.name?.charAt(0)?.toUpperCase() || "U"}

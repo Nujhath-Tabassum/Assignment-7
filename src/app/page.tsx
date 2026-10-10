@@ -3,6 +3,7 @@ import logo from "../../public/bazar-hero.png";
 import AllProducts from "@/components/AllProducts";
 import IncreasePrice from "@/components/IncreasePrice";
 import DecreasingPrice from "@/components/DecreasingPrice";
+import Link from "next/link";
 
 export default function Home() {
     return (
@@ -31,11 +32,13 @@ export default function Home() {
                             দামের পরিবর্তন এক জায়গায়।
                         </p>
 
-                        {/* Button */}
-                        <button className="mt-4 rounded-md bg-green-600 px-5 py-2 text-sm font-medium text-white shadow-md transition hover:bg-green-700 sm:mt-5">
-                            সব পণ্য দেখুন
-                        </button>
-
+                        {/* Primary CTA Button */}
+<Link
+    href="#সব-পণ্য"
+    className="mt-4 inline-flex items-center justify-center rounded-lg bg-green-600 px-5 py-3 text-sm font-semibold text-white shadow-md transition-colors hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700 sm:mt-5"
+>
+    সব পণ্য দেখুন
+</Link>
                     </div>
 
                     {/* Right Image */}
@@ -54,7 +57,9 @@ export default function Home() {
 
             <IncreasePrice />
             <DecreasingPrice />
-            <AllProducts />
+            <div id="সব-পণ্য" className="scroll-mt-6">
+    <AllProducts />
+</div>
 
         </div>
     );

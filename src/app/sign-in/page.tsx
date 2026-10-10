@@ -4,6 +4,7 @@ import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 
 const SignInPage = () => {
     const router = useRouter();
@@ -31,20 +32,24 @@ const SignInPage = () => {
             });
 
             if (error) {
-                setErrorMessage(
-                    error.message || "ইমেইল অথবা পাসওয়ার্ড সঠিক নয়।"
-                );
+                const message =
+                    error.message || "ইমেইল অথবা পাসওয়ার্ড সঠিক নয়।";
+
+                setErrorMessage(message);
+                toast.error(message);
                 return;
             }
 
             if (data) {
+                toast.success("সফলভাবে সাইন ইন হয়েছে!");
                 router.push("/");
                 router.refresh();
             }
         } catch {
-            setErrorMessage(
-                "সাইন ইন করা যায়নি। আবার চেষ্টা করুন।"
-            );
+            const message = "সাইন ইন করা যায়নি। আবার চেষ্টা করুন।";
+
+            setErrorMessage(message);
+            toast.error(message);
         } finally {
             setIsLoading(false);
         }
@@ -61,12 +66,17 @@ const SignInPage = () => {
             });
 
             if (error) {
-                setErrorMessage(
-                    error.message || "Google দিয়ে সাইন ইন করা যায়নি।"
-                );
+                const message =
+                    error.message || "Google দিয়ে সাইন ইন করা যায়নি।";
+
+                setErrorMessage(message);
+                toast.error(message);
             }
         } catch {
-            setErrorMessage("Google দিয়ে সাইন ইন করা যায়নি।");
+            const message = "Google দিয়ে সাইন ইন করা যায়নি।";
+
+            setErrorMessage(message);
+            toast.error(message);
         }
     };
 
@@ -81,12 +91,17 @@ const SignInPage = () => {
             });
 
             if (error) {
-                setErrorMessage(
-                    error.message || "GitHub দিয়ে সাইন ইন করা যায়নি।"
-                );
+                const message =
+                    error.message || "GitHub দিয়ে সাইন ইন করা যায়নি।";
+
+                setErrorMessage(message);
+                toast.error(message);
             }
         } catch {
-            setErrorMessage("GitHub দিয়ে সাইন ইন করা যায়নি।");
+            const message = "GitHub দিয়ে সাইন ইন করা যায়নি।";
+
+            setErrorMessage(message);
+            toast.error(message);
         }
     };
 

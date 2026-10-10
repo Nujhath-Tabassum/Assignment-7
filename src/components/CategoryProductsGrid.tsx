@@ -1,7 +1,8 @@
 "use client";
-import Link from "next/link";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
+
 function toBanglaNumber(value: number): string {
   const banglaDigits = "০১২৩৪৫৬৭৮৯";
 
@@ -9,6 +10,27 @@ function toBanglaNumber(value: number): string {
     return banglaDigits[Number(digit)];
   });
 }
+
+function toBanglaUnit(unit: string): string {
+  const units: Record<string, string> = {
+    kg: "কেজি",
+    kilogram: "কেজি",
+    kilograms: "কেজি",
+    g: "গ্রাম",
+    gram: "গ্রাম",
+    grams: "গ্রাম",
+    dozen: "ডজন",
+    piece: "পিস",
+    pieces: "পিস",
+    liter: "লিটার",
+    litre: "লিটার",
+    liters: "লিটার",
+    litres: "লিটার",
+  };
+
+  return units[unit.toLowerCase()] ?? unit;
+}
+
 interface Product {
   id: number;
   slug: string;
@@ -56,7 +78,7 @@ export default function CategoryProductsGrid({
   return (
     <>
       {/* Sorting bar */}
-      <section className="mb-4 flex h-[55px] items-center justify-end rounded-[15px] border border-[#e7e5e1] bg-[#fdfcfb] px-4">
+      <section className="mb-4 flex h-13.75 items-center justify-end rounded-[15px] border border-[#e7e5e1] bg-[#fdfcfb] px-4">
         <label
           htmlFor="sort"
           className="mr-2 text-[12px] text-[#777873]"
@@ -87,10 +109,10 @@ export default function CategoryProductsGrid({
       <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {sortedProducts.map((product) => (
           <Link
-  key={product.id}
-  href={`/product/${product.id}`}
-  className="block min-h-[113px] rounded-[15px] border border-[#e7e5e1] bg-[#fdfcfb] p-3 transition-shadow duration-200 hover:shadow-sm"
->
+            key={product.id}
+            href={`/product/${product.id}`}
+            className="block min-h-28.5 rounded-[15px] border border-[#e7e5e1] bg-[#fdfcfb] p-3 transition-shadow duration-200 hover:shadow-sm"
+          >
             {/* Product information */}
             <div className="flex items-center gap-2.5">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#f3f2ef] text-[24px]">
@@ -102,7 +124,9 @@ export default function CategoryProductsGrid({
                   {product.nameBn}
                 </h2>
 
-               
+                <p className="text-[10px] leading-4 text-[#777873]">
+                  প্রতি {toBanglaUnit(product.unit)}
+                </p>
               </div>
             </div>
 
@@ -114,27 +138,27 @@ export default function CategoryProductsGrid({
 
               <div className="flex items-center justify-between gap-2">
                 <p className="text-[16px] font-bold leading-5 text-[#292c26]">
-                  {toBanglaNumber(product.today)} <span className="text-[12px]">টাকা</span>
+                  {toBanglaNumber(product.today)}{" "}
+                  <span className="text-[12px]">টাকা</span>
                 </p>
 
                 {/* Price change */}
-               
-<span
-  className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-semibold leading-none ${
-    product.change.dir === "up"
-      ? "bg-[#f8f2f0] text-[#c7443e]"
-      : product.change.dir === "down"
-        ? "bg-[#eff5ee] text-[#47945b]"
-        : "bg-[#f1f1ed] text-[#666961]"
-  }`}
->
-  {product.change.dir === "up"
-    ? "▲"
-    : product.change.dir === "down"
-      ? "▼"
-      : "—"}{" "}
-  {toBanglaNumber(Math.abs(product.change.pct))}%
-</span>
+                <span
+                  className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-semibold leading-none ${
+                    product.change.dir === "up"
+                      ? "bg-[#f8f2f0] text-[#c7443e]"
+                      : product.change.dir === "down"
+                        ? "bg-[#eff5ee] text-[#47945b]"
+                        : "bg-[#f1f1ed] text-[#666961]"
+                  }`}
+                >
+                  {product.change.dir === "up"
+                    ? "▲"
+                    : product.change.dir === "down"
+                      ? "▼"
+                      : "—"}{" "}
+                  {toBanglaNumber(Math.abs(product.change.pct))}%
+                </span>
               </div>
             </div>
           </Link>

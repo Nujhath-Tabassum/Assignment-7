@@ -40,6 +40,24 @@ function toBanglaNumber(value: number): string {
     return "০১২৩৪৫৬৭৮৯"[Number(digit)];
   });
 }
+function toBanglaUnit(unit: string): string {
+  const units: Record<string, string> = {
+    kg: "কেজি",
+    kilogram: "কেজি",
+    kilograms: "কেজি",
+    gram: "গ্রাম",
+    g: "গ্রাম",
+    liter: "লিটার",
+    litre: "লিটার",
+    liters: "লিটার",
+    litres: "লিটার",
+    piece: "পিস",
+    pieces: "পিস",
+    dozen: "ডজন",
+  };
+
+  return units[unit.toLowerCase()] ?? unit;
+}
 
 function ProductLoading() {
   return (
@@ -140,7 +158,7 @@ async function ProductDetails({ params }: ProductPageProps) {
                 </h1>
 
                 <p className="mt-0.5 text-xs text-[#777873]">
-                  প্রতি {product.unit} · {product.categoryNameBn}
+                  প্রতি {toBanglaUnit(product.unit)} · {product.categoryNameBn}
                 </p>
 
                 <p className="mt-2 text-xs text-[#55564f]">
@@ -168,7 +186,7 @@ async function ProductDetails({ params }: ProductPageProps) {
               </p>
 
               <p className="mt-1 text-[11px] text-[#777873]">
-                টাকা / {product.unit}
+                টাকা / {toBanglaUnit(product.unit)}
               </p>
 
               <p className={`mt-1 text-[10px] font-semibold ${priceChangeColor}`}>
@@ -248,7 +266,7 @@ async function ProductDetails({ params }: ProductPageProps) {
               </p>
 
               <p className="mt-1 text-[10px] text-[#777873]">
-                প্রতি {product.unit}-এর গড় বাজারদর
+              প্রতি {toBanglaUnit(product.unit)}-এর গড় বাজারদর
               </p>
             </div>
           </div>
