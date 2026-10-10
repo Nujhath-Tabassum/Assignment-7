@@ -1,8 +1,6 @@
 import { Suspense } from "react";
-
 import CategoryProductsGrid from "@/components/CategoryProductsGrid";
 import CategoryProductsSkeleton from "@/components/CategoryProductsSkeleton";
-import CategoryEmptyState from "@/components/CategoryEmptyState";
 
 interface Params {
   slug: string;
@@ -32,27 +30,69 @@ interface Product {
 }
 
 const API_URL =
-  "https://api.api-store.workers.dev/api/bazardor/products";
+  "https://api.abcz.workers.dev/api/bazardor/products";
 
 async function CategoryProducts({ params }: CategoryPageProps) {
   const { slug } = await params;
 
-  const res = await fetch(
-    `${API_URL}?category=${encodeURIComponent(slug)}`,
-    {
-      cache: "no-store",
-    }
-  );
+  const url = `${API_URL}?category=${encodeURIComponent(slug)}`;
+
+  const res = await fetch(url, {
+    cache: "no-store",
+  });
 
   if (!res.ok) {
-  return <CategoryEmptyState />;
-}
+    console.error("Failed to fetch category products:", {
+      url: res.url,
+      status: res.status,
+      statusText: res.statusText,
+    });
 
-  const products: Product[] = await res.json();
+    throw new Error(
+      `Failed to fetch products: ${res.status} ${res.statusText}`
+    );
+  }
 
-  if (!Array.isArray(products) || products.length === 0) {
-  return <CategoryEmptyState />;
-}
+  const contentType = res.headers.get("content-type") ?? "";
+
+  if (!contentType.toLowerCase().includes("application/json")) {
+    const responseText = await res.text();
+
+    console.error("Category API returned a non-JSON response:", {
+      url: res.url,
+      status: res.status,
+      contentType,
+      responsePreview: responseText.slice(0, 300),
+    });
+
+    throw new Error(
+      "The category API did not return JSON. Check the server logs."
+    );
+  }
+
+  let data: unknown;
+
+  try {
+    data = await res.json();
+  } catch (error) {
+    console.error("Failed to parse category API response:", error);
+
+    throw new Error("The category API returned invalid JSON.");
+  }
+
+  if (!Array.isArray(data)) {
+    console.error("Unexpected category API response:", data);
+
+    throw new Error(
+      "The category API returned an unexpected data format."
+    );
+  }
+
+  const products = data as Product[];
+
+  if (products.length === 0) {
+    return null;
+  }
 
   const category = products[0];
 
@@ -106,7 +146,9 @@ function CategoryLoading() {
   );
 }
 
-export default function CategoryPage({ params }: CategoryPageProps) {
+export default function CategoryPage({
+  params,
+}: CategoryPageProps) {
   return (
     <Suspense fallback={<CategoryLoading />}>
       <CategoryProducts params={params} />
