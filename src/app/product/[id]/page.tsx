@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 
 interface Market {
   market: string;
@@ -40,6 +41,7 @@ function toBanglaNumber(value: number): string {
     return "০১২৩৪৫৬৭৮৯"[Number(digit)];
   });
 }
+
 function toBanglaUnit(unit: string): string {
   const units: Record<string, string> = {
     kg: "কেজি",
@@ -71,9 +73,7 @@ function ProductLoading() {
   );
 }
 
-export default function ProductPage({
-  params,
-}: ProductPageProps) {
+export default function ProductPage({ params }: ProductPageProps) {
   return (
     <Suspense fallback={<ProductLoading />}>
       <ProductDetails params={params} />
@@ -82,8 +82,12 @@ export default function ProductPage({
 }
 
 async function ProductDetails({ params }: ProductPageProps) {
+  // Render this part dynamically instead of during prerendering.
+  await connection();
+
   const { id } = await params;
 
+  // Only allow numeric product IDs.
   if (!/^\d+$/.test(id)) {
     notFound();
   }
@@ -143,7 +147,6 @@ async function ProductDetails({ params }: ProductPageProps) {
   return (
     <main className="min-h-screen bg-[#f5f4f0] px-4 py-5 sm:px-6 sm:py-7">
       <div className="mx-auto max-w-205 space-y-4">
-
         {/* Product header */}
         <section className="rounded-xl border border-[#e8e6e1] bg-[#fdfcfb] p-4 sm:p-5">
           <div className="flex items-center justify-between gap-4">
@@ -158,17 +161,14 @@ async function ProductDetails({ params }: ProductPageProps) {
                 </h1>
 
                 <p className="mt-0.5 text-xs text-[#777873]">
-                  প্রতি {toBanglaUnit(product.unit)} · {product.categoryNameBn}
+                  প্রতি {toBanglaUnit(product.unit)} ·{" "}
+                  {product.categoryNameBn}
                 </p>
 
                 <p className="mt-2 text-xs text-[#55564f]">
                   গতকালের তুলনায় আজকের দাম{" "}
                   <span className="font-semibold">
-                    {product.change.dir === "up"
-                      ? "বেড়েছে"
-                      : product.change.dir === "down"
-                        ? "কমেছে"
-                        : "অপরিবর্তিত"}
+                    {priceChangeText}
                   </span>{" "}
                   · {toBanglaNumber(product.today)} টাকা
                 </p>
@@ -189,7 +189,9 @@ async function ProductDetails({ params }: ProductPageProps) {
                 টাকা / {toBanglaUnit(product.unit)}
               </p>
 
-              <p className={`mt-1 text-[10px] font-semibold ${priceChangeColor}`}>
+              <p
+                className={`mt-1 text-[10px] font-semibold ${priceChangeColor}`}
+              >
                 {priceChangeIcon}{" "}
                 {toBanglaNumber(Math.abs(product.change.pct))}%
               </p>
@@ -266,7 +268,7 @@ async function ProductDetails({ params }: ProductPageProps) {
               </p>
 
               <p className="mt-1 text-[10px] text-[#777873]">
-              প্রতি {toBanglaUnit(product.unit)}-এর গড় বাজারদর
+                প্রতি {toBanglaUnit(product.unit)}-এর গড় বাজারদর
               </p>
             </div>
           </div>
@@ -279,7 +281,7 @@ async function ProductDetails({ params }: ProductPageProps) {
 
             {markets.length > 0 ? (
               <div className="overflow-x-auto rounded-xl border border-[#e8e6e1]">
-                <table className="w-full min-w-145] border-collapse text-left text-xs">
+                <table className="w-full min-w-[580px] border-collapse text-left text-xs">
                   <thead className="bg-[#fdfcfb] text-[#777873]">
                     <tr>
                       <th className="px-3 py-3 font-medium">
