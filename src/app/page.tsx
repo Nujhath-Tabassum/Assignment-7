@@ -3,6 +3,7 @@ import logo from "../../public/bazar-hero.png";
 import AllProducts from "@/components/AllProducts";
 import IncreasePrice from "@/components/IncreasePrice";
 import DecreasingPrice from "@/components/DecreasingPrice";
+
 import Link from "next/link";
 
 export default function Home() {

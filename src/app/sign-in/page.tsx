@@ -10,6 +10,9 @@ const SignInPage = () => {
     const router = useRouter();
 
     const [isLoading, setIsLoading] = useState(false);
+    const [socialLoading, setSocialLoading] = useState<
+        "google" | "github" | null
+    >(null);
     const [errorMessage, setErrorMessage] = useState("");
 
     // Email and password sign in
@@ -21,8 +24,8 @@ const SignInPage = () => {
 
         const formData = new FormData(e.currentTarget);
 
-        const email = formData.get("email") as string;
-        const password = formData.get("password") as string;
+        const email = String(formData.get("email") ?? "");
+        const password = String(formData.get("password") ?? "");
 
         try {
             const { data, error } = await authClient.signIn.email({
@@ -32,6 +35,8 @@ const SignInPage = () => {
             });
 
             if (error) {
+                console.error("Email sign-in error:", error);
+
                 const message =
                     error.message || "ইমেইল অথবা পাসওয়ার্ড সঠিক নয়।";
 
@@ -45,7 +50,9 @@ const SignInPage = () => {
                 router.push("/");
                 router.refresh();
             }
-        } catch {
+        } catch (error) {
+            console.error("Email sign-in exception:", error);
+
             const message = "সাইন ইন করা যায়নি। আবার চেষ্টা করুন।";
 
             setErrorMessage(message);
@@ -55,53 +62,50 @@ const SignInPage = () => {
         }
     };
 
-    // Google sign in
-    const handleGoogleSignIn = async () => {
+    // Google and GitHub sign in
+    const handleSocialSignIn = async (
+        provider: "google" | "github"
+    ) => {
+        if (socialLoading || isLoading) return;
+
         setErrorMessage("");
+        setSocialLoading(provider);
 
         try {
-            const { error } = await authClient.signIn.social({
-                provider: "google",
+            const { data, error } = await authClient.signIn.social({
+                provider,
                 callbackURL: "/",
             });
 
             if (error) {
+                console.error(`${provider} sign-in error:`, error);
+
                 const message =
-                    error.message || "Google দিয়ে সাইন ইন করা যায়নি।";
+                    error.message ||
+                    (provider === "google"
+                        ? "Google দিয়ে সাইন ইন করা যায়নি।"
+                        : "GitHub দিয়ে সাইন ইন করা যায়নি।");
 
                 setErrorMessage(message);
                 toast.error(message);
+                return;
             }
-        } catch {
-            const message = "Google দিয়ে সাইন ইন করা যায়নি।";
+
+            // Better Auth normally redirects the browser to the provider.
+            // If it returns without redirecting, log the response for debugging.
+            console.log(`${provider} sign-in response:`, data);
+        } catch (error) {
+            console.error(`${provider} sign-in exception:`, error);
+
+            const message =
+                provider === "google"
+                    ? "Google দিয়ে সাইন ইন করা যায়নি।"
+                    : "GitHub দিয়ে সাইন ইন করা যায়নি।";
 
             setErrorMessage(message);
             toast.error(message);
-        }
-    };
-
-    // GitHub sign in
-    const handleGithubSignIn = async () => {
-        setErrorMessage("");
-
-        try {
-            const { error } = await authClient.signIn.social({
-                provider: "github",
-                callbackURL: "/",
-            });
-
-            if (error) {
-                const message =
-                    error.message || "GitHub দিয়ে সাইন ইন করা যায়নি।";
-
-                setErrorMessage(message);
-                toast.error(message);
-            }
-        } catch {
-            const message = "GitHub দিয়ে সাইন ইন করা যায়নি।";
-
-            setErrorMessage(message);
-            toast.error(message);
+        } finally {
+            setSocialLoading(null);
         }
     };
 
@@ -135,7 +139,8 @@ const SignInPage = () => {
                             placeholder="you@example.com"
                             autoComplete="email"
                             required
-                            className="h-8 w-full rounded-lg border border-[#e7e5e0] bg-transparent px-3 text-xs outline-none transition focus:border-green-600 focus:ring-1 focus:ring-green-600"
+                            disabled={isLoading || socialLoading !== null}
+                            className="h-8 w-full rounded-lg border border-[#e7e5e0] bg-transparent px-3 text-xs outline-none transition focus:border-green-600 focus:ring-1 focus:ring-green-600 disabled:opacity-60"
                         />
                     </div>
 
@@ -155,7 +160,8 @@ const SignInPage = () => {
                             placeholder="আপনার পাসওয়ার্ড লিখুন"
                             autoComplete="current-password"
                             required
-                            className="h-8 w-full rounded-lg border border-[#e7e5e0] bg-transparent px-3 text-xs outline-none transition focus:border-green-600 focus:ring-1 focus:ring-green-600"
+                            disabled={isLoading || socialLoading !== null}
+                            className="h-8 w-full rounded-lg border border-[#e7e5e0] bg-transparent px-3 text-xs outline-none transition focus:border-green-600 focus:ring-1 focus:ring-green-600 disabled:opacity-60"
                         />
                     </div>
 
@@ -169,10 +175,10 @@ const SignInPage = () => {
                         </p>
                     )}
 
-                    {/* Sign In Button */}
+                    {/* Email Sign In Button */}
                     <button
                         type="submit"
-                        disabled={isLoading}
+                        disabled={isLoading || socialLoading !== null}
                         className="mt-0.5 h-8.25 w-full rounded-lg bg-[#43884a] text-xs font-semibold text-white shadow-[0_3px_0_#c7d8c8] transition hover:bg-[#36763d] active:translate-y-0.5 active:shadow-none disabled:cursor-not-allowed disabled:opacity-60"
                     >
                         {isLoading ? "সাইন ইন হচ্ছে..." : "সাইন ইন"}
@@ -192,31 +198,38 @@ const SignInPage = () => {
                         {/* Google */}
                         <button
                             type="button"
-                            onClick={handleGoogleSignIn}
-                            className="flex h-8 items-center justify-center gap-1 rounded-lg border border-[#e7e5e0] bg-transparent px-2 text-[11px] font-medium transition hover:bg-gray-50"
+                            onClick={() => handleSocialSignIn("google")}
+                            disabled={isLoading || socialLoading !== null}
+                            className="flex min-h-9 items-center justify-center gap-1 rounded-lg border border-[#e7e5e0] bg-transparent px-2 text-[11px] font-medium transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
                         >
                             <span className="font-bold text-[#4285f4]">
                                 G
                             </span>
-                            Google দিয়ে চালিয়ে যান
+
+                            {socialLoading === "google"
+                                ? "সংযোগ হচ্ছে..."
+                                : "Google দিয়ে চালিয়ে যান"}
                         </button>
 
                         {/* GitHub */}
                         <button
                             type="button"
-                            onClick={handleGithubSignIn}
-                            className="flex h-8 items-center justify-center gap-1 rounded-lg border border-[#e7e5e0] bg-transparent px-2 text-[11px] font-medium transition hover:bg-gray-50"
+                            onClick={() => handleSocialSignIn("github")}
+                            disabled={isLoading || socialLoading !== null}
+                            className="flex min-h-9 items-center justify-center gap-1 rounded-lg border border-[#e7e5e0] bg-transparent px-2 text-[11px] font-medium transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
                         >
                             <svg
                                 viewBox="0 0 24 24"
-                                className="h-3.5 w-3.5"
+                                className="h-3.5 w-3.5 shrink-0"
                                 fill="currentColor"
                                 aria-hidden="true"
                             >
                                 <path d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.55.1.76-.24.76-.54v-2.08c-3.1.67-3.75-1.32-3.75-1.32-.5-1.29-1.24-1.63-1.24-1.63-1.01-.69.08-.68.08-.68 1.12.08 1.71 1.15 1.71 1.15.99 1.7 2.6 1.21 3.23.92.1-.72.39-1.21.7-1.49-2.47-.28-5.07-1.24-5.07-5.5 0-1.21.43-2.2 1.15-2.97-.12-.28-.5-1.41.11-2.94 0 0 .94-.3 3.05 1.14a10.6 10.6 0 0 1 5.55 0c2.12-1.44 3.05-1.14 3.05-1.14.61 1.53.23 2.66.11 2.94.72.77 1.15 1.76 1.15 2.97 0 4.27-2.6 5.21-5.08 5.49.4.35.75 1.02.75 2.06v3.08c0 .3.2.65.77.54A11.1 11.1 0 0 0 12 .9Z" />
                             </svg>
 
-                            GitHub দিয়ে চালিয়ে যান
+                            {socialLoading === "github"
+                                ? "সংযোগ হচ্ছে..."
+                                : "GitHub দিয়ে চালিয়ে যান"}
                         </button>
                     </div>
                 </form>
