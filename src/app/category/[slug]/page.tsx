@@ -58,9 +58,9 @@ async function CategoryProducts({
 
   return (
     <main className="min-h-[calc(100vh-125px)] bg-[#f4f3ef] px-4 py-6 sm:px-6">
-      <div className="mx-auto max-w-[800px]">
+      <div className="mx-auto max-w-220">
         {/* Category heading */}
-        <section className="mb-5 flex min-h-[77px] items-center gap-3 rounded-[15px] border border-[#e7e5e1] bg-[#fdfcfb] px-4 py-4">
+        <section className="mb-5 flex min-h-19.25 items-center gap-3 rounded-[15px] border border-[#e7e5e1] bg-[#fdfcfb] px-4 py-4">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#f3f2ef] text-[28px]">
             {category.categoryIcon}
           </div>
@@ -89,16 +89,16 @@ async function CategoryProducts({
 function CategoryLoading() {
   return (
     <main className="min-h-[calc(100vh-125px)] bg-[#f4f3ef] px-4 py-6 sm:px-6">
-      <div className="mx-auto max-w-[920px] animate-pulse">
-        <div className="mb-5 h-[77px] rounded-[15px] bg-white" />
+      <div className="mx-auto max-w-230 animate-pulse">
+        <div className="mb-5 h-19.25 rounded-[15px] bg-white" />
 
-        <div className="mb-4 h-[55px] rounded-[15px] bg-white" />
+        <div className="mb-4 h-13.75 rounded-[15px] bg-white" />
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3, 4].map((item) => (
             <div
               key={item}
-              className="h-[113px] rounded-[15px] bg-white"
+              className="h-28.25 rounded-[15px] bg-white"
             />
           ))}
         </div>

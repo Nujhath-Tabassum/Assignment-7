@@ -102,7 +102,7 @@ const SignInPage = () => {
             </div>
 
             {/* Sign In Form */}
-            <div className="w-full max-w-sm rounded-2xl border border-[#e8e6e1] bg-[#fffdfb] p-[18px] shadow-sm">
+            <div className="w-full max-w-sm rounded-2xl border border-[#e8e6e1] bg-[#fffdfb] p-4.5 shadow-sm">
                 <form onSubmit={onSubmit} className="flex flex-col gap-3">
                     {/* Email */}
                     <div>
@@ -120,7 +120,7 @@ const SignInPage = () => {
                             placeholder="you@example.com"
                             autoComplete="email"
                             required
-                            className="h-[32px] w-full rounded-lg border border-[#e7e5e0] bg-transparent px-3 text-xs outline-none transition focus:border-green-600 focus:ring-1 focus:ring-green-600"
+                            className="h-8 w-full rounded-lg border border-[#e7e5e0] bg-transparent px-3 text-xs outline-none transition focus:border-green-600 focus:ring-1 focus:ring-green-600"
                         />
                     </div>
 
@@ -140,7 +140,7 @@ const SignInPage = () => {
                             placeholder="আপনার পাসওয়ার্ড লিখুন"
                             autoComplete="current-password"
                             required
-                            className="h-[32px] w-full rounded-lg border border-[#e7e5e0] bg-transparent px-3 text-xs outline-none transition focus:border-green-600 focus:ring-1 focus:ring-green-600"
+                            className="h-8 w-full rounded-lg border border-[#e7e5e0] bg-transparent px-3 text-xs outline-none transition focus:border-green-600 focus:ring-1 focus:ring-green-600"
                         />
                     </div>
 
@@ -158,7 +158,7 @@ const SignInPage = () => {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="mt-0.5 h-[33px] w-full rounded-lg bg-[#43884a] text-xs font-semibold text-white shadow-[0_3px_0_#c7d8c8] transition hover:bg-[#36763d] active:translate-y-0.5 active:shadow-none disabled:cursor-not-allowed disabled:opacity-60"
+                        className="mt-0.5 h-8.25 w-full rounded-lg bg-[#43884a] text-xs font-semibold text-white shadow-[0_3px_0_#c7d8c8] transition hover:bg-[#36763d] active:translate-y-0.5 active:shadow-none disabled:cursor-not-allowed disabled:opacity-60"
                     >
                         {isLoading ? "সাইন ইন হচ্ছে..." : "সাইন ইন"}
                     </button>
@@ -178,7 +178,7 @@ const SignInPage = () => {
                         <button
                             type="button"
                             onClick={handleGoogleSignIn}
-                            className="flex h-[32px] items-center justify-center gap-1 rounded-lg border border-[#e7e5e0] bg-transparent px-2 text-[11px] font-medium transition hover:bg-gray-50"
+                            className="flex h-8 items-center justify-center gap-1 rounded-lg border border-[#e7e5e0] bg-transparent px-2 text-[11px] font-medium transition hover:bg-gray-50"
                         >
                             <span className="font-bold text-[#4285f4]">
                                 G
@@ -190,7 +190,7 @@ const SignInPage = () => {
                         <button
                             type="button"
                             onClick={handleGithubSignIn}
-                            className="flex h-[32px] items-center justify-center gap-1 rounded-lg border border-[#e7e5e0] bg-transparent px-2 text-[11px] font-medium transition hover:bg-gray-50"
+                            className="flex h-8 items-center justify-center gap-1 rounded-lg border border-[#e7e5e0] bg-transparent px-2 text-[11px] font-medium transition hover:bg-gray-50"
                         >
                             <svg
                                 viewBox="0 0 24 24"

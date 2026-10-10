@@ -1,4 +1,4 @@
-import ProtectedProductLink from "@/components/ProtectedProductLink";
+import Link from "next/link";
 
 interface Product {
   id: number;
@@ -52,9 +52,10 @@ const DecreasingPrice = async () => {
 
         <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
           {decreasedProducts.map((product) => (
-            <ProtectedProductLink
+            <Link
               key={product.id}
               href={`/product/${product.id}`}
+              aria-label={`${product.nameBn} পণ্যের বিস্তারিত দেখুন`}
               className="block rounded-xl border border-gray-200 bg-white p-3 transition duration-200 hover:-translate-y-0.5 hover:border-green-200 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
             >
               <div className="flex items-center gap-3">
@@ -91,7 +92,7 @@ const DecreasingPrice = async () => {
                   ▼ {banglaNumber(Math.abs(product.change.pct))}%
                 </span>
               </div>
-            </ProtectedProductLink>
+            </Link>
           ))}
         </div>
 

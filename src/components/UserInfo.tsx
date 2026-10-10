@@ -4,6 +4,7 @@ import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const UserInfo = () => {
     const { data: session } = authClient.useSession();
@@ -77,12 +78,14 @@ const UserInfo = () => {
                     >
                         {/* Avatar */}
                         <div className="h-7 w-7 overflow-hidden rounded-lg bg-gray-100">
-                            {user.image ? (
-                                <img
-                                    src={user.image}
-                                    alt={user.name || "User avatar"}
-                                    className="h-full w-full object-cover"
-                                />
+                           {user.image ? (
+    <Image
+        src={user.image}
+        alt={user.name || "User avatar"}
+        width={28}
+        height={28}
+        className="h-full w-full object-cover"
+    />
                             ) : (
                                 <div className="flex h-full w-full items-center justify-center bg-[#e8f0e8] text-sm font-semibold text-[#43884a]">
                                     {user.name?.charAt(0)?.toUpperCase() || "U"}

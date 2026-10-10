@@ -44,7 +44,7 @@ function toBanglaNumber(value: number): string {
 function ProductLoading() {
   return (
     <main className="min-h-screen bg-[#f5f4f0] px-4 py-6">
-      <div className="mx-auto max-w-[820px] animate-pulse space-y-4">
+      <div className="mx-auto max-w-205 animate-pulse space-y-4">
         <div className="h-28 rounded-xl bg-white" />
         <div className="h-36 rounded-xl bg-white" />
         <div className="h-96 rounded-xl bg-white" />
@@ -124,7 +124,7 @@ async function ProductDetails({ params }: ProductPageProps) {
 
   return (
     <main className="min-h-screen bg-[#f5f4f0] px-4 py-5 sm:px-6 sm:py-7">
-      <div className="mx-auto max-w-[820px] space-y-4">
+      <div className="mx-auto max-w-205 space-y-4">
 
         {/* Product header */}
         <section className="rounded-xl border border-[#e8e6e1] bg-[#fdfcfb] p-4 sm:p-5">
@@ -158,7 +158,7 @@ async function ProductDetails({ params }: ProductPageProps) {
             </div>
 
             {/* Today's price */}
-            <div className="w-[100px] shrink-0 rounded-xl bg-[#f5f4f0] px-3 py-3 text-center sm:w-[112px]">
+            <div className="w-25 shrink-0 rounded-xl bg-[#f5f4f0] px-3 py-3 text-center sm:w-[112px]">
               <p className="text-[10px] text-[#777873]">
                 আজকের দাম
               </p>
@@ -261,7 +261,7 @@ async function ProductDetails({ params }: ProductPageProps) {
 
             {markets.length > 0 ? (
               <div className="overflow-x-auto rounded-xl border border-[#e8e6e1]">
-                <table className="w-full min-w-[580px] border-collapse text-left text-xs">
+                <table className="w-full min-w-145] border-collapse text-left text-xs">
                   <thead className="bg-[#fdfcfb] text-[#777873]">
                     <tr>
                       <th className="px-3 py-3 font-medium">

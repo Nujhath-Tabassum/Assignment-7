@@ -149,7 +149,7 @@ const ProfilePage = () => {
                         </div>
                     </div>
 
-                   <button
+                    <button
     type="button"
     onClick={handleSignOut}
     disabled={isSigningOut}

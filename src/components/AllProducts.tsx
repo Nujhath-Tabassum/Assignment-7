@@ -1,5 +1,4 @@
-import ProtectedProductLink from "@/components/ProtectedProductLink";
-
+import Link from "next/link";
 interface Product {
     id: number;
     nameBn: string;
@@ -26,10 +25,6 @@ const AllProducts = async () => {
         }
     );
 
-    if (!res.ok) {
-        throw new Error("পণ্যের তথ্য লোড করা যায়নি।");
-    }
-
     const products: Product[] = await res.json();
 
     return (
@@ -45,11 +40,11 @@ const AllProducts = async () => {
 
                 <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
                     {products.map((product) => (
-                        <ProtectedProductLink
-                            key={product.id}
-                            href={`/product/${product.id}`}
-                            className="block rounded-xl border border-gray-200 bg-white p-3 transition hover:shadow-md"
-                        >
+                       <Link
+  key={product.id}
+  href={`/product/${product.id}`}
+  className="block rounded-xl border border-gray-200 bg-white p-3 transition hover:shadow-md"
+>
                             <div className="flex items-center gap-3">
                                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#f5f6f2] text-[22px]">
                                     {product.image}
@@ -108,7 +103,7 @@ const AllProducts = async () => {
                                     )}
                                 </div>
                             </div>
-                        </ProtectedProductLink>
+                       </Link>
                     ))}
                 </div>
             </div>
