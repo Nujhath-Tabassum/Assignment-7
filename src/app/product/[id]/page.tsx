@@ -34,7 +34,7 @@ interface ProductPageProps {
 }
 
 const API_URL =
-  "https://api.api-store.workers.dev/api/bazardor/products";
+  "https://api.abcz.workers.dev/api/bazardor/products";
 
 function toBanglaNumber(value: number): string {
   return value.toString().replace(/\d/g, (digit) => {
